@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>TagRastrear — Autovip Associação</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+/* ── RESET & BASE ─────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy-950: #060E1F;
+  --navy-900: #0B1830;
+  --navy-800: #0F2244;
+  --navy-700: #132B55;
+  --navy-600: #1A3870;
+  --blue-500: #1A56A0;
+  --blue-400: #2F80ED;
+  --blue-300: #56A8F5;
+  --cyan:     #00D4FF;
+  --cyan-dim: #00A8CC;
+  --green:    #00E5A0;
+  --orange:   #FF8C42;
+  --red:      #FF4D6D;
+  --white:    #F0F6FF;
+  --muted:    #7A9EC4;
+  --border:   rgba(0,212,255,0.15);
+  --glass:    rgba(15,34,68,0.7);
+  --glow:     0 0 20px rgba(0,212,255,0.25);
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--navy-950);
+  color: var(--white);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── UTILITIES ────────────────────────────────────── */
+.mono { font-family: 'IBM Plex Mono', monospace; }
+.raja { font-family: 'Rajdhani', sans-serif; }
+
+/* ── PAGES ────────────────────────────────────────── */
+.page { display: none; min-height: 100vh; }
+.page.active { display: flex; }
+
+/* ══════════════════════════════════════════════════
+   LOGIN PAGE
+══════════════════════════════════════════════════ */
+#login-page {
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animated grid background */
+.login-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background:
+    linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px),
+    radial-gradient(ellipse 80% 60% at 50% 50%, rgba(26,86,160,0.3) 0%, transparent 70%),
+    var(--navy-950);
+  background-size: 40px 40px, 40px 40px, 100% 100%, 100% 100%;
+  animation: gridDrift 20s linear infinite;
+}
+@keyframes gridDrift {
+  0%   { background-position: 0 0,   0 0,   50% 50%, 0 0; }
+  100% { background-position: 40px 40px, 40px 40px, 50% 50%, 0 0; }
+}
+
+/* Floating orbs */
+.orb {
+  position: absolute; border-radius: 50%;
+  filter: blur(80px); opacity: 0.3; z-index: 0;
+  animation: float 8s ease-in-out infinite;
+}
+.orb-1 { width: 500px; height: 500px; background: var(--blue-500); top: -150px; right: -100px; }
+.orb-2 { width: 350px; height: 350px; background: var(--cyan-dim); bottom: -100px; left: -80px; animation-delay: -4s; }
+.orb-3 { width: 200px; height: 200px; background: var(--blue-300); top: 40%; left: 10%; animation-delay: -2s; }
+@keyframes float {
+  0%,100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-30px) scale(1.05); }
+}
+
+/* Radar ring */
+.radar-ring {
+  position: absolute; right: 10%; top: 50%;
+  transform: translateY(-50%);
+  width: 380px; height: 380px;
+  z-index: 0; opacity: 0.12;
+}
+.radar-ring svg { width: 100%; height: 100%; animation: radarSpin 8s linear infinite; }
+@keyframes radarSpin { to { transform: rotate(360deg); } }
+
+.login-card {
+  position: relative; z-index: 10;
+  width: 420px;
+  background: var(--glass);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 48px 40px;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.6), var(--glow);
+  animation: cardIn 0.6s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes cardIn {
+  from { opacity:0; transform: translateY(40px) scale(0.95); }
+  to   { opacity:1; transform: translateY(0)    scale(1); }
+}
+
+.login-logo {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 32px;
+}
+.login-logo .logo-icon {
+  width: 44px; height: 44px;
+  background: linear-gradient(135deg, var(--blue-400), var(--cyan));
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; font-weight: 700;
+  font-family: 'Rajdhani', sans-serif;
+  box-shadow: 0 4px 20px rgba(0,212,255,0.4);
+}
+.login-logo .logo-text { display: flex; flex-direction: column; }
+.login-logo .logo-name {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 22px; font-weight: 700;
+  color: var(--white); letter-spacing: 1px;
+}
+.login-logo .logo-sub {
+  font-size: 10px; color: var(--muted); letter-spacing: 2px;
+  text-transform: uppercase; font-family: 'IBM Plex Mono', monospace;
+}
+
+.login-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 26px; font-weight: 700;
+  margin-bottom: 6px; color: var(--white);
+}
+.login-subtitle { font-size: 13px; color: var(--muted); margin-bottom: 32px; }
+
+.form-group { margin-bottom: 18px; }
+.form-label {
+  display: block; font-size: 11px; font-weight: 600;
+  color: var(--muted); letter-spacing: 1.5px;
+  text-transform: uppercase; margin-bottom: 8px;
+  font-family: 'IBM Plex Mono', monospace;
+}
+.form-input {
+  width: 100%; padding: 13px 16px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(0,212,255,0.2);
+  border-radius: 10px; color: var(--white);
+  font-size: 14px; font-family: 'DM Sans', sans-serif;
+  transition: all 0.2s;
+  outline: none;
+}
+.form-input:focus {
+  border-color: var(--cyan);
+  background: rgba(0,212,255,0.06);
+  box-shadow: 0 0 0 3px rgba(0,212,255,0.1);
+}
+.form-input::placeholder { color: rgba(122,158,196,0.5); }
+
+.input-icon-wrap { position: relative; }
+.input-icon-wrap .form-input { padding-left: 42px; }
+.input-icon {
+  position: absolute; left: 14px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted); font-size: 15px; pointer-events: none;
+}
+
+.btn-login {
+  width: 100%; padding: 14px;
+  background: linear-gradient(135deg, var(--blue-400) 0%, var(--cyan) 100%);
+  border: none; border-radius: 10px;
+  color: var(--navy-950); font-size: 15px; font-weight: 700;
+  font-family: 'Rajdhani', sans-serif; letter-spacing: 1.5px;
+  cursor: pointer; transition: all 0.2s;
+  margin-top: 8px;
+  box-shadow: 0 4px 24px rgba(0,212,255,0.3);
+}
+.btn-login:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0,212,255,0.45);
+}
+.btn-login:active { transform: translateY(0); }
+
+.login-footer {
+  text-align: center; margin-top: 24px;
+  font-size: 11px; color: var(--muted);
+  font-family: 'IBM Plex Mono', monospace;
+}
+.login-footer span { color: var(--cyan); }
+
+.demo-hint {
+  margin-top: 20px; padding: 10px 14px;
+  background: rgba(0,212,255,0.05);
+  border: 1px dashed rgba(0,212,255,0.2);
+  border-radius: 8px; font-size: 11.5px;
+  color: var(--muted); text-align: center;
+}
+.demo-hint b { color: var(--cyan); }
+
+/* ══════════════════════════════════════════════════
+   DASHBOARD PAGE
+══════════════════════════════════════════════════ */
+#dashboard-page {
+  flex-direction: column;
+  background: var(--navy-950);
+}
+
+/* ── TOPBAR ─────────────────────────────────────── */
+.topbar {
+  display: flex; align-items: center;
+  padding: 0 24px;
+  height: 60px;
+  background: rgba(11,24,48,0.95);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  gap: 16px; flex-shrink: 0; z-index: 100;
+  position: sticky; top: 0;
+}
+.topbar-logo {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none;
+}
+.topbar-logo .icon {
+  width: 34px; height: 34px;
+  background: linear-gradient(135deg, var(--blue-400), var(--cyan));
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Rajdhani',sans-serif; font-weight: 700; font-size: 14px;
+  color: var(--navy-950);
+}
+.topbar-logo .name {
+  font-family: 'Rajdhani',sans-serif;
+  font-size: 18px; font-weight: 700; color: var(--white);
+  letter-spacing: 1px;
+}
+.topbar-logo .assoc {
+  font-size: 9px; color: var(--muted);
+  font-family: 'IBM Plex Mono',monospace;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  display: block; line-height: 1;
+}
+
+.topbar-divider { width: 1px; height: 28px; background: var(--border); }
+
+.topbar-nav {
+  display: flex; align-items: center; gap: 2px; flex: 1;
+}
+.topbar-nav a {
+  padding: 6px 14px; border-radius: 7px;
+  font-size: 13px; font-weight: 500;
+  color: var(--muted); text-decoration: none;
+  transition: all 0.15s; cursor: pointer;
+  display: flex; align-items: center; gap: 7px;
+}
+.topbar-nav a:hover { color: var(--white); background: rgba(255,255,255,0.05); }
+.topbar-nav a.active {
+  color: var(--cyan);
+  background: rgba(0,212,255,0.08);
+}
+
+.topbar-right { display: flex; align-items: center; gap: 12px; margin-left: auto; }
+
+.live-badge {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 12px; border-radius: 20px;
+  background: rgba(0,229,160,0.1);
+  border: 1px solid rgba(0,229,160,0.25);
+  font-size: 11px; font-weight: 600; color: var(--green);
+  font-family: 'IBM Plex Mono',monospace; letter-spacing: 1px;
+}
+.live-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--green);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100% { opacity:1; transform:scale(1); }
+  50%      { opacity:0.5; transform:scale(0.7); }
+}
+
+.topbar-time {
+  font-family: 'IBM Plex Mono',monospace;
+  font-size: 12px; color: var(--muted);
+}
+
+.avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue-500), var(--blue-300));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; cursor: pointer;
+  border: 2px solid var(--border);
+}
+
+.btn-logout {
+  padding: 6px 14px; border-radius: 7px;
+  background: rgba(255,77,109,0.1);
+  border: 1px solid rgba(255,77,109,0.25);
+  color: #FF4D6D; font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: all 0.15s;
+  font-family: 'DM Sans',sans-serif;
+}
+.btn-logout:hover { background: rgba(255,77,109,0.2); }
+
+/* ── MAIN LAYOUT ───────────────────────────────── */
+.dashboard-body {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  grid-template-rows: auto 1fr;
+  gap: 0;
+  flex: 1; overflow: hidden;
+  height: calc(100vh - 60px);
+}
+
+/* ── STATS ROW ─────────────────────────────────── */
+.stats-row {
+  grid-column: 1 / -1;
+  display: flex; gap: 1px;
+  background: var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.stat-card {
+  flex: 1; padding: 16px 22px;
+  background: rgba(11,24,48,0.9);
+  display: flex; align-items: center; gap: 16px;
+  transition: background 0.15s; cursor: default;
+}
+.stat-card:hover { background: rgba(15,34,68,0.95); }
+.stat-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.stat-info { display: flex; flex-direction: column; }
+.stat-value {
+  font-family: 'Rajdhani',sans-serif;
+  font-size: 24px; font-weight: 700; line-height: 1;
+  color: var(--white);
+}
+.stat-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.stat-change { font-size: 10px; margin-top: 3px; font-family: 'IBM Plex Mono',monospace; }
+.stat-change.up { color: var(--green); }
+.stat-change.down { color: var(--red); }
+
+/* ── SIDEBAR ───────────────────────────────────── */
+.sidebar {
+  border-right: 1px solid var(--border);
+  background: rgba(9,18,38,0.8);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebar-header {
+  padding: 16px 18px 12px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.sidebar-title {
+  font-family: 'Rajdhani',sans-serif;
+  font-size: 14px; font-weight: 700;
+  color: var(--white); letter-spacing: 1px; text-transform: uppercase;
+}
+.sidebar-count {
+  font-size: 10px; font-family: 'IBM Plex Mono',monospace;
+  color: var(--cyan); background: rgba(0,212,255,0.1);
+  padding: 2px 8px; border-radius: 10px;
+  border: 1px solid rgba(0,212,255,0.2);
+}
+
+.search-wrap {
+  padding: 12px 14px; border-bottom: 1px solid var(--border);
+}
+.search-input-wrap { position: relative; }
+.search-input {
+  width: 100%; padding: 8px 12px 8px 34px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 8px; color: var(--white);
+  font-size: 12.5px; outline: none;
+  font-family: 'DM Sans',sans-serif;
+  transition: all 0.15s;
+}
+.search-input:focus {
+  border-color: rgba(0,212,255,0.3);
+  background: rgba(0,212,255,0.04);
+}
+.search-input::placeholder { color: rgba(122,158,196,0.5); }
+.search-icon {
+  position: absolute; left: 10px; top: 50%;
+  transform: translateY(-50%); color: var(--muted); font-size: 13px;
+}
+
+.filter-pills {
+  display: flex; gap: 6px; padding: 10px 14px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.pill {
+  padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600;
+  cursor: pointer; transition: all 0.15s; letter-spacing: 0.5px;
+  border: 1px solid transparent;
+}
+.pill.all    { background: rgba(0,212,255,0.12); color: var(--cyan); border-color: rgba(0,212,255,0.25); }
+.pill.online { color: var(--green); border-color: rgba(0,229,160,0.2); }
+.pill.alert  { color: var(--orange); border-color: rgba(255,140,66,0.2); }
+.pill.offline{ color: var(--red); border-color: rgba(255,77,109,0.2); }
+.pill:not(.all):hover { background: rgba(255,255,255,0.05); }
+
+.vehicle-list {
+  flex: 1; overflow-y: auto;
+  padding: 8px 10px;
+}
+.vehicle-list::-webkit-scrollbar { width: 4px; }
+.vehicle-list::-webkit-scrollbar-track { background: transparent; }
+.vehicle-list::-webkit-scrollbar-thumb { background: rgba(0,212,255,0.2); border-radius: 2px; }
+
+.vehicle-card {
+  padding: 14px 14px;
+  border-radius: 11px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.18s;
+  position: relative;
+  overflow: hidden;
+}
+.vehicle-card::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px; border-radius: 3px 0 0 3px;
+}
+.vehicle-card.status-online::before { background: var(--green); }
+.vehicle-card.status-alert::before  { background: var(--orange); }
+.vehicle-card.status-offline::before{ background: var(--red); }
+
+.vehicle-card:hover {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(0,212,255,0.15);
+}
+.vehicle-card.active {
+  background: rgba(0,212,255,0.07);
+  border-color: rgba(0,212,255,0.3);
+  box-shadow: 0 0 16px rgba(0,212,255,0.08);
+}
+
+.vc-top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.vc-icon {
+  width: 36px; height: 36px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; flex-shrink: 0;
+}
+.vc-icon.car  { background: rgba(47,128,237,0.15); }
+.vc-icon.moto { background: rgba(86,162,245,0.15); }
+
+.vc-info { flex: 1; min-width: 0; }
+.vc-name {
+  font-size: 13px; font-weight: 600; color: var(--white);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.vc-tag {
+  font-family: 'IBM Plex Mono',monospace;
+  font-size: 10.5px; color: var(--cyan); margin-top: 2px;
+}
+.vc-status-badge {
+  padding: 3px 8px; border-radius: 12px;
+  font-size: 9.5px; font-weight: 700; letter-spacing: 0.8px;
+  text-transform: uppercase; font-family: 'IBM Plex Mono',monospace;
+  flex-shrink: 0;
+}
+.status-online .vc-status-badge { background: rgba(0,229,160,0.12); color: var(--green); }
+.status-alert .vc-status-badge  { background: rgba(255,140,66,0.12); color: var(--orange); }
+.status-offline .vc-status-badge{ background: rgba(255,77,109,0.12); color: var(--red); }
+
+.vc-meta {
+  display: flex; gap: 12px;
+  font-size: 10.5px; color: var(--muted);
+  font-family: 'IBM Plex Mono',monospace;
+}
+.vc-meta span { display: flex; align-items: center; gap: 4px; }
+
+/* ── MAP AREA ─────────────────────────────────── */
+.map-area {
+  position: relative; overflow: hidden;
+  background: var(--navy-900);
+}
+
+/* Simulated map */
+.map-canvas {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 90% 70% at 55% 50%, rgba(26,56,112,0.4) 0%, transparent 70%),
+    var(--navy-900);
+}
+
+/* Grid lines simulating map tiles */
+.map-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* Road lines */
+.map-roads { position: absolute; inset: 0; }
+
+/* Map overlay UI */
+.map-controls {
+  position: absolute; top: 16px; right: 16px;
+  display: flex; flex-direction: column; gap: 6px; z-index: 10;
+}
+.map-btn {
+  width: 36px; height: 36px;
+  background: rgba(11,24,48,0.9);
+  border: 1px solid var(--border);
+  border-radius: 8px; color: var(--white);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 16px; transition: all 0.15s;
+  backdrop-filter: blur(8px);
+}
+.map-btn:hover { background: rgba(0,212,255,0.1); border-color: rgba(0,212,255,0.4); }
+
+.map-type-toggle {
+  position: absolute; top: 16px; left: 16px; z-index: 10;
+  display: flex; gap: 2px;
+  background: rgba(11,24,48,0.9);
+  border: 1px solid var(--border);
+  border-radius: 10px; padding: 3px;
+  backdrop-filter: blur(8px);
+}
+.map-type-btn {
+  padding: 5px 12px; border-radius: 7px;
+  font-size: 11px; font-weight: 600; cursor: pointer;
+  transition: all 0.15s; color: var(--muted);
+  font-family: 'IBM Plex Mono',monospace;
+}
+.map-type-btn.active {
+  background: rgba(0,212,255,0.15);
+  color: var(--cyan);
+}
+
+/* Vehicle markers on map */
+.map-marker {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  cursor: pointer; z-index: 5;
+}
+.marker-pulse {
+  width: 44px; height: 44px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; transition: transform 0.2s;
+}
+.map-marker:hover .marker-pulse { transform: scale(1.15); }
+
+.marker-pulse::before {
+  content: '';
+  position: absolute; inset: -6px; border-radius: 50%;
+  animation: markerPulse 2s ease-out infinite;
+}
+.marker-online .marker-pulse { background: rgba(0,229,160,0.2); border: 2px solid var(--green); }
+.marker-online .marker-pulse::before { border: 2px solid rgba(0,229,160,0.4); }
+.marker-alert  .marker-pulse { background: rgba(255,140,66,0.2); border: 2px solid var(--orange); }
+.marker-alert  .marker-pulse::before { border: 2px solid rgba(255,140,66,0.4); }
+.marker-offline .marker-pulse { background: rgba(255,77,109,0.15); border: 2px solid var(--red); }
+.marker-offline .marker-pulse::before { border: 2px solid rgba(255,77,109,0.3); animation: none; }
+@keyframes markerPulse {
+  0%   { transform: scale(1); opacity:0.8; }
+  100% { transform: scale(2.2); opacity:0; }
+}
+
+.marker-icon { font-size: 18px; z-index: 1; }
+.marker-label {
+  position: absolute; top: 100%; left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  white-space: nowrap;
+  background: rgba(11,24,48,0.92);
+  border: 1px solid var(--border);
+  border-radius: 6px; padding: 3px 8px;
+  font-size: 10px; font-family: 'IBM Plex Mono',monospace;
+  color: var(--white); backdrop-filter: blur(8px);
+  pointer-events: none;
+}
+
+/* Detail panel */
+.detail-panel {
+  position: absolute; bottom: 16px; left: 50%;
+  transform: translateX(-50%);
+  width: 480px; max-width: calc(100% - 32px);
+  background: rgba(9,18,38,0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: 16px; padding: 18px 20px;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+  z-index: 20;
+  animation: slideUp 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes slideUp {
+  from { opacity:0; transform: translateX(-50%) translateY(20px); }
+  to   { opacity:1; transform: translateX(-50%) translateY(0); }
+}
+
+.detail-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.detail-icon {
+  width: 44px; height: 44px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; background: rgba(47,128,237,0.15);
+}
+.detail-title { flex: 1; }
+.detail-name { font-size: 16px; font-weight: 700; color: var(--white); }
+.detail-tag { font-family: 'IBM Plex Mono',monospace; font-size: 11px; color: var(--cyan); }
+.detail-close {
+  width: 28px; height: 28px; border-radius: 7px;
+  background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: var(--muted); font-size: 16px; transition: all 0.15s;
+}
+.detail-close:hover { background: rgba(255,77,109,0.1); color: var(--red); }
+
+.detail-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+.detail-stat {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px; padding: 10px 12px;
+}
+.detail-stat-label { font-size: 9.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; font-family: 'IBM Plex Mono',monospace; }
+.detail-stat-value { font-size: 14px; font-weight: 700; color: var(--white); margin-top: 4px; font-family: 'Rajdhani',sans-serif; }
+
+.detail-timeline { margin-top: 14px; }
+.detail-timeline-title { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; font-family: 'IBM Plex Mono',monospace; margin-bottom: 8px; }
+.timeline-items { display: flex; flex-direction: column; gap: 5px; }
+.timeline-item {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 11px; font-family: 'IBM Plex Mono',monospace;
+}
+.timeline-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); flex-shrink: 0; }
+.timeline-time { color: var(--muted); width: 60px; flex-shrink: 0; }
+.timeline-coords { color: var(--white); }
+
+/* ── BOTTOM INFO BAR ─────────────────────────── */
+.map-infobar {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 32px;
+  background: rgba(9,18,38,0.85);
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; gap: 20px;
+  padding: 0 16px; font-size: 10.5px;
+  font-family: 'IBM Plex Mono',monospace; color: var(--muted);
+  z-index: 10; backdrop-filter: blur(8px);
+}
+.infobar-item { display: flex; align-items: center; gap: 6px; }
+.infobar-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+/* ── NOTIFICATIONS ───────────────────────────── */
+.notification {
+  position: fixed; top: 70px; right: 16px;
+  width: 300px; z-index: 999;
+  background: rgba(9,18,38,0.97);
+  border: 1px solid var(--border);
+  border-radius: 12px; padding: 14px 16px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+  display: flex; align-items: flex-start; gap: 12px;
+  animation: notifIn 0.3s ease, notifOut 0.3s ease 3.7s forwards;
+  pointer-events: none;
+}
+@keyframes notifIn  { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:translateX(0); } }
+@keyframes notifOut { from { opacity:1; transform:translateX(0); } to { opacity:0; transform:translateX(20px); } }
+.notif-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+.notif-content { flex: 1; }
+.notif-title { font-size: 12.5px; font-weight: 700; color: var(--white); margin-bottom: 3px; }
+.notif-msg { font-size: 11px; color: var(--muted); }
+
+/* ── EMPTY STATE ─────────────────────────────── */
+.map-empty {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  color: var(--muted); text-align: center;
+  pointer-events: none;
+}
+.map-empty-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.3; }
+.map-empty-text { font-size: 13px; opacity: 0.5; }
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN PAGE ══════════════════════════════════ -->
+<div id="login-page" class="page active">
+  <div class="login-bg"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <!-- Radar decorative -->
+  <div class="radar-ring">
+    <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="100" cy="100" r="90" stroke="cyan" stroke-width="0.5"/>
+      <circle cx="100" cy="100" r="60" stroke="cyan" stroke-width="0.5"/>
+      <circle cx="100" cy="100" r="30" stroke="cyan" stroke-width="0.5"/>
+      <line x1="100" y1="10"  x2="100" y2="190" stroke="cyan" stroke-width="0.5"/>
+      <line x1="10"  y1="100" x2="190" y2="100" stroke="cyan" stroke-width="0.5"/>
+      <line x1="27"  y1="27"  x2="173" y2="173" stroke="cyan" stroke-width="0.3"/>
+      <line x1="173" y1="27"  x2="27"  y2="173" stroke="cyan" stroke-width="0.3"/>
+      <path d="M100 100 L100 10 A90 90 0 0 1 190 100 Z" fill="cyan" fill-opacity="0.08"/>
+    </svg>
+  </div>
+
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="logo-icon">TR</div>
+      <div class="logo-text">
+        <span class="logo-name">TagRastrear</span>
+        <span class="logo-sub">Autovip Associação</span>
+      </div>
+    </div>
+
+    <div class="login-title">Acesso ao Sistema</div>
+    <div class="login-subtitle">Monitoramento veicular em tempo real</div>
+
+    <div class="form-group">
+      <label class="form-label">Usuário / E-mail</label>
+      <div class="input-icon-wrap">
+        <span class="input-icon">👤</span>
+        <input type="text" class="form-input" placeholder="seu@email.com" id="inp-user" value="admin@autovip.com.br"/>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Senha</label>
+      <div class="input-icon-wrap">
+        <span class="input-icon">🔒</span>
+        <input type="password" class="form-input" placeholder="••••••••" id="inp-pass" value="••••••••"/>
+      </div>
+    </div>
+
+    <button class="btn-login" onclick="doLogin()">ENTRAR NO SISTEMA →</button>
+
+    <div class="demo-hint">
+      Demo: <b>admin@autovip.com.br</b> / qualquer senha
+    </div>
+
+    <div class="login-footer">
+      Sistema protegido · <span>TagRastrear v1.0</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DASHBOARD PAGE ══════════════════════════════ -->
+<div id="dashboard-page" class="page">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <a class="topbar-logo">
+      <div class="icon">TR</div>
+      <div>
+        <div class="name">TagRastrear</div>
+        <span class="assoc">Autovip Associação</span>
+      </div>
+    </a>
+
+    <div class="topbar-divider"></div>
+
+    <nav class="topbar-nav">
+      <a class="active">🗺 Mapa ao Vivo</a>
+      <a>📋 Histórico</a>
+      <a>🏷 Beacons</a>
+      <a>⚙️ Configurações</a>
+    </nav>
+
+    <div class="topbar-right">
+      <div class="live-badge"><div class="live-dot"></div>AO VIVO</div>
+      <div class="topbar-time mono" id="clock">--:--:--</div>
+      <div class="avatar">A</div>
+      <button class="btn-logout" onclick="doLogout()">Sair</button>
+    </div>
+  </div>
+
+  <!-- MAIN BODY -->
+  <div class="dashboard-body">
+
+    <!-- STATS ROW -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(0,229,160,0.1)">🚗</div>
+        <div class="stat-info">
+          <div class="stat-value" style="color:var(--green)">8</div>
+          <div class="stat-label">Veículos Online</div>
+          <div class="stat-change up">↑ +2 última hora</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(255,140,66,0.1)">⚠️</div>
+        <div class="stat-info">
+          <div class="stat-value" style="color:var(--orange)">2</div>
+          <div class="stat-label">Alertas Ativos</div>
+          <div class="stat-change down">● Movimento suspeito</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(255,77,109,0.1)">📴</div>
+        <div class="stat-info">
+          <div class="stat-value" style="color:var(--red)">3</div>
+          <div class="stat-label">Sem Sinal</div>
+          <div class="stat-change" style="color:var(--muted)">→ &gt; 1h sem hit</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(47,128,237,0.1)">📡</div>
+        <div class="stat-info">
+          <div class="stat-value" id="hits-counter">1.284</div>
+          <div class="stat-label">Hits Última Hora</div>
+          <div class="stat-change up">↑ atualiza a cada 5s</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(0,212,255,0.1)">👥</div>
+        <div class="stat-info">
+          <div class="stat-value" style="color:var(--cyan)">47</div>
+          <div class="stat-label">Escutadores Ativos</div>
+          <div class="stat-change up">↑ crowd-based PWA</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <span class="sidebar-title">Frota</span>
+        <span class="sidebar-count">13 veículos</span>
+      </div>
+      <div class="search-wrap">
+        <div class="search-input-wrap">
+          <span class="search-icon">🔍</span>
+          <input class="search-input" placeholder="Buscar placa, tag, nome…"/>
+        </div>
+      </div>
+      <div class="filter-pills">
+        <div class="pill all">Todos</div>
+        <div class="pill online">Online</div>
+        <div class="pill alert">Alerta</div>
+        <div class="pill offline">Offline</div>
+      </div>
+
+      <div class="vehicle-list" id="vehicle-list">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+
+    <!-- MAP AREA -->
+    <div class="map-area" id="map-area">
+      <div class="map-canvas">
+        <div class="map-grid"></div>
+        <!-- SVG roads -->
+        <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.08" viewBox="0 0 900 600">
+          <!-- Main avenues -->
+          <line x1="0" y1="200" x2="900" y2="200" stroke="#56A8F5" stroke-width="3"/>
+          <line x1="0" y1="380" x2="900" y2="380" stroke="#56A8F5" stroke-width="2"/>
+          <line x1="180" y1="0" x2="180" y2="600" stroke="#56A8F5" stroke-width="3"/>
+          <line x1="500" y1="0" x2="500" y2="600" stroke="#56A8F5" stroke-width="2"/>
+          <line x1="750" y1="0" x2="750" y2="600" stroke="#56A8F5" stroke-width="1.5"/>
+          <!-- Secondary streets -->
+          <line x1="0" y1="100" x2="900" y2="100" stroke="#2F80ED" stroke-width="1"/>
+          <line x1="0" y1="290" x2="900" y2="320" stroke="#2F80ED" stroke-width="1"/>
+          <line x1="0" y1="480" x2="900" y2="460" stroke="#2F80ED" stroke-width="1"/>
+          <line x1="80" y1="0" x2="80" y2="600" stroke="#2F80ED" stroke-width="1"/>
+          <line x1="320" y1="0" x2="340" y2="600" stroke="#2F80ED" stroke-width="1"/>
+          <line x1="620" y1="0" x2="600" y2="600" stroke="#2F80ED" stroke-width="1"/>
+          <!-- Diagonal -->
+          <line x1="0" y1="600" x2="500" y2="0" stroke="#1A56A0" stroke-width="1.5"/>
+          <line x1="400" y1="600" x2="900" y2="100" stroke="#1A56A0" stroke-width="1"/>
+          <!-- District blocks -->
+          <rect x="200" y="220" width="140" height="100" fill="none" stroke="#2F80ED" stroke-width="0.5"/>
+          <rect x="520" y="50"  width="100" height="80"  fill="none" stroke="#2F80ED" stroke-width="0.5"/>
+          <rect x="760" y="250" width="90"  height="70"  fill="none" stroke="#2F80ED" stroke-width="0.5"/>
+          <rect x="50"  y="420" width="110" height="90"  fill="none" stroke="#2F80ED" stroke-width="0.5"/>
+        </svg>
+      </div>
+
+      <!-- Map UI -->
+      <div class="map-type-toggle">
+        <div class="map-type-btn active">Padrão</div>
+        <div class="map-type-btn">Satélite</div>
+        <div class="map-type-btn">Tráfego</div>
+      </div>
+
+      <div class="map-controls">
+        <div class="map-btn">＋</div>
+        <div class="map-btn">－</div>
+        <div class="map-btn" title="Centralizar">⊕</div>
+        <div class="map-btn" title="Tela cheia">⛶</div>
+      </div>
+
+      <!-- Markers injected by JS -->
+      <div id="markers-container"></div>
+
+      <!-- Detail panel -->
+      <div class="detail-panel" id="detail-panel" style="display:none">
+        <div class="detail-header">
+          <div class="detail-icon" id="dp-icon">🚗</div>
+          <div class="detail-title">
+            <div class="detail-name" id="dp-name">—</div>
+            <div class="detail-tag" id="dp-tag">—</div>
+          </div>
+          <div class="detail-close" onclick="closeDetail()">✕</div>
+        </div>
+        <div class="detail-grid" id="dp-grid"></div>
+        <div class="detail-timeline">
+          <div class="detail-timeline-title">Últimos Pontos Registrados</div>
+          <div class="timeline-items" id="dp-timeline"></div>
+        </div>
+      </div>
+
+      <!-- Info bar -->
+      <div class="map-infobar">
+        <div class="infobar-item">
+          <div class="infobar-dot" style="background:var(--green)"></div> 8 online
+        </div>
+        <div class="infobar-item">
+          <div class="infobar-dot" style="background:var(--orange)"></div> 2 alerta
+        </div>
+        <div class="infobar-item">
+          <div class="infobar-dot" style="background:var(--red)"></div> 3 offline
+        </div>
+        <span style="margin-left:auto">BLE Crowd-Based · Caruaru/PE · Zoom 14</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Notification container -->
+<div id="notif-wrap"></div>
+
+<script>
+/* ── DATA ──────────────────────────────────────── */
+const vehicles = [
+  { id:1,  name:'Honda Civic Prata',   plate:'ABC-1234', tag:'VEICULO-ABC1234', type:'car',  status:'online',  lat:'08%', lng:'35%',  speed:'47 km/h', battery:'92%',   last:'há 12s',  hits:284, address:'Av. Agamenon Magalhães, 1420' },
+  { id:2,  name:'Yamaha MT-07',        plate:'DEF-5678', tag:'VEICULO-DEF5678', type:'moto', status:'online',  lat:'28%', lng:'55%',  speed:'62 km/h', battery:'78%',   last:'há 8s',   hits:411, address:'R. Vigário Freire, 340' },
+  { id:3,  name:'Toyota Hilux Branca', plate:'GHI-9012', tag:'VEICULO-GHI9012', type:'car',  status:'alert',   lat:'58%', lng:'72%',  speed:'0 km/h',  battery:'61%',   last:'há 2min', hits:92,  address:'BR-232, km 132 — Parado 18min' },
+  { id:4,  name:'Honda CG 160 Titan',  plate:'JKL-3456', tag:'VEICULO-JKL3456', type:'moto', status:'online',  lat:'70%', lng:'22%',  speed:'39 km/h', battery:'85%',   last:'há 5s',   hits:178, address:'R. São José, 88 — Centro' },
+  { id:5,  name:'Fiat Strada Grafite', plate:'MNO-7890', tag:'VEICULO-MNO7890', type:'car',  status:'alert',   lat:'42%', lng:'40%',  speed:'0 km/h',  battery:'43%',   last:'há 4min', hits:37,  address:'Zona Industrial — Sem movimento' },
+  { id:6,  name:'Honda XRE 300',       plate:'PQR-1122', tag:'VEICULO-PQR1122', type:'moto', status:'online',  lat:'18%', lng:'78%',  speed:'54 km/h', battery:'97%',   last:'há 3s',   hits:523, address:'Av. Perimetral Leste, 680' },
+  { id:7,  name:'Volkswagen Gol Prata',plate:'STU-3344', tag:'VEICULO-STU3344', type:'car',  status:'offline', lat:'82%', lng:'48%',  speed:'—',       battery:'—',     last:'há 1h22', hits:0,   address:'Último: Bairro Rendeiras' },
+  { id:8,  name:'Biz 125 Vermelha',    plate:'VWX-5566', tag:'VEICULO-VWX5566', type:'moto', status:'online',  lat:'50%', lng:'60%',  speed:'28 km/h', battery:'71%',   last:'há 20s',  hits:96,  address:'R. João XXIII, 55' },
+  { id:9,  name:'Ford Ka Azul',        plate:'YZA-7788', tag:'VEICULO-YZA7788', type:'car',  status:'online',  lat:'34%', lng:'85%',  speed:'73 km/h', battery:'88%',   last:'há 7s',   hits:367, address:'BR-104, acesso Caruaru Norte' },
+  { id:10, name:'Fazer 250 Preta',     plate:'BCD-9900', tag:'VEICULO-BCD9900', type:'moto', status:'offline', lat:'90%', lng:'15%',  speed:'—',       battery:'—',     last:'há 2h5',  hits:0,   address:'Último: Vassoural' },
+  { id:11, name:'Renault Kwid Branco', plate:'EFG-1234', tag:'VEICULO-EFG1234', type:'car',  status:'online',  lat:'62%', lng:'33%',  speed:'31 km/h', battery:'66%',   last:'há 14s',  hits:147, address:'Av. Agamenon Magalhães, 900' },
+  { id:12, name:'Honda Pop 110i',      plate:'HIJ-5678', tag:'VEICULO-HIJ5678', type:'moto', status:'offline', lat:'14%', lng:'52%',  speed:'—',       battery:'—',     last:'há 3h',   hits:0,   address:'Último: Alto do Moura' },
+  { id:13, name:'Chevrolet Onix Preto',plate:'KLM-9012', tag:'VEICULO-KLM9012', type:'car',  status:'online',  lat:'76%', lng:'68%',  speed:'55 km/h', battery:'94%',   last:'há 2s',   hits:489, address:'R. Clementino Coelho, 210' },
+];
+
+const statusLabel = { online:'Online', alert:'Alerta', offline:'Offline' };
+const typeIcon    = { car:'🚗', moto:'🏍' };
+
+let selectedId = null;
+
+/* ── RENDER SIDEBAR ─────────────────────────── */
+function renderSidebar(data = vehicles) {
+  const list = document.getElementById('vehicle-list');
+  list.innerHTML = data.map(v => `
+    <div class="vehicle-card status-${v.status} ${selectedId===v.id?'active':''}"
+         onclick="selectVehicle(${v.id})">
+      <div class="vc-top">
+        <div class="vc-icon ${v.type}">${typeIcon[v.type]}</div>
+        <div class="vc-info">
+          <div class="vc-name">${v.name}</div>
+          <div class="vc-tag">${v.tag}</div>
+        </div>
+        <span class="vc-status-badge">${statusLabel[v.status]}</span>
+      </div>
+      <div class="vc-meta">
+        <span>🪪 ${v.plate}</span>
+        <span>🕐 ${v.last}</span>
+        ${v.status !== 'offline' ? `<span>⚡ ${v.speed}</span>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ── RENDER MARKERS ─────────────────────────── */
+function renderMarkers() {
+  const c = document.getElementById('markers-container');
+  c.innerHTML = vehicles.map(v => `
+    <div class="map-marker marker-${v.status}"
+         style="left:${v.lng};top:${v.lat}"
+         onclick="selectVehicle(${v.id})">
+      <div class="marker-pulse">
+        <span class="marker-icon">${typeIcon[v.type]}</span>
+      </div>
+      <div class="marker-label">${v.plate}</div>
+    </div>
+  `).join('');
+}
+
+/* ── SELECT VEHICLE ─────────────────────────── */
+function selectVehicle(id) {
+  selectedId = id;
+  renderSidebar();
+  const v = vehicles.find(x => x.id === id);
+  if (!v) return;
+
+  const panel = document.getElementById('detail-panel');
+  panel.style.display = 'block';
+  document.getElementById('dp-icon').textContent = typeIcon[v.type];
+  document.getElementById('dp-name').textContent = v.name + ' · ' + v.plate;
+  document.getElementById('dp-tag').textContent  = v.tag;
+
+  const statusColor = { online:'var(--green)', alert:'var(--orange)', offline:'var(--red)' };
+  document.getElementById('dp-grid').innerHTML = `
+    <div class="detail-stat">
+      <div class="detail-stat-label">Status</div>
+      <div class="detail-stat-value" style="color:${statusColor[v.status]}">${statusLabel[v.status]}</div>
+    </div>
+    <div class="detail-stat">
+      <div class="detail-stat-label">Velocidade</div>
+      <div class="detail-stat-value">${v.speed}</div>
+    </div>
+    <div class="detail-stat">
+      <div class="detail-stat-label">Bateria</div>
+      <div class="detail-stat-value">${v.battery}</div>
+    </div>
+    <div class="detail-stat">
+      <div class="detail-stat-label">Hits/h</div>
+      <div class="detail-stat-value" style="color:var(--cyan)">${v.hits}</div>
+    </div>
+  `;
+
+  // Fake timeline
+  const now = new Date();
+  const times = [0, 12, 35, 78, 140].map(s => {
+    const d = new Date(now - s*1000);
+    return d.toTimeString().slice(0,8);
+  });
+  const coords = [
+    [-8.2836, -35.9756], [-8.2841, -35.9748], [-8.2850, -35.9740],
+    [-8.2858, -35.9732], [-8.2862, -35.9728],
+  ];
+  document.getElementById('dp-timeline').innerHTML = v.status !== 'offline'
+    ? times.map((t,i) => `
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <span class="timeline-time">${t}</span>
+          <span class="timeline-coords">${coords[i].join(', ')}</span>
+        </div>
+      `).join('')
+    : `<div class="timeline-item"><div class="timeline-dot" style="background:var(--red)"></div><span class="timeline-time">—</span><span class="timeline-coords">Sem dados recentes</span></div>`;
+}
+
+function closeDetail() {
+  selectedId = null;
+  renderSidebar();
+  document.getElementById('detail-panel').style.display = 'none';
+}
+
+/* ── LOGIN / LOGOUT ──────────────────────────── */
+function doLogin() {
+  const page = document.getElementById('login-page');
+  page.style.transition = 'opacity 0.4s';
+  page.style.opacity = '0';
+  setTimeout(() => {
+    page.classList.remove('active');
+    const dash = document.getElementById('dashboard-page');
+    dash.classList.add('active');
+    dash.style.opacity = '0';
+    dash.style.transition = 'opacity 0.4s';
+    setTimeout(() => dash.style.opacity = '1', 50);
+    renderSidebar();
+    renderMarkers();
+    startClock();
+    startHitsCounter();
+    showNotif('🟢', 'Sistema Online', 'Conexão estabelecida com 47 escutadores ativos.');
+    setTimeout(() => showNotif('⚠️', 'Alerta: GHI-9012', 'Toyota Hilux parada há 18 min na BR-232.'), 3000);
+  }, 400);
+}
+
+function doLogout() {
+  const dash = document.getElementById('dashboard-page');
+  dash.style.opacity = '0';
+  setTimeout(() => {
+    dash.classList.remove('active');
+    const login = document.getElementById('login-page');
+    login.classList.add('active');
+    login.style.opacity = '0';
+    setTimeout(() => { login.style.opacity='1'; }, 50);
+    clearInterval(window._clockTimer);
+    clearInterval(window._hitsTimer);
+  }, 300);
+}
+
+/* ── CLOCK ───────────────────────────────────── */
+function startClock() {
+  function tick() {
+    const now = new Date();
+    document.getElementById('clock').textContent = now.toTimeString().slice(0,8);
+  }
+  tick();
+  window._clockTimer = setInterval(tick, 1000);
+}
+
+/* ── HITS COUNTER ────────────────────────────── */
+function startHitsCounter() {
+  let base = 1284;
+  window._hitsTimer = setInterval(() => {
+    base += Math.floor(Math.random() * 12);
+    document.getElementById('hits-counter').textContent = base.toLocaleString('pt-BR');
+  }, 5000);
+}
+
+/* ── NOTIFICATIONS ───────────────────────────── */
+function showNotif(icon, title, msg) {
+  const wrap = document.getElementById('notif-wrap');
+  const n = document.createElement('div');
+  n.className = 'notification';
+  n.innerHTML = `
+    <div class="notif-icon">${icon}</div>
+    <div class="notif-content">
+      <div class="notif-title">${title}</div>
+      <div class="notif-msg">${msg}</div>
+    </div>`;
+  wrap.appendChild(n);
+  setTimeout(() => n.remove(), 4200);
+}
+
+/* ── FILTER PILLS ───────────────────────────── */
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      document.querySelectorAll('.pill').forEach(p => {
+        p.style.background = ''; p.style.color = '';
+      });
+      const filter = pill.textContent.toLowerCase();
+      if (filter === 'todos') {
+        pill.style.background = 'rgba(0,212,255,0.12)';
+        renderSidebar(vehicles);
+      } else if (filter === 'online') {
+        renderSidebar(vehicles.filter(v => v.status === 'online'));
+      } else if (filter === 'alerta') {
+        renderSidebar(vehicles.filter(v => v.status === 'alert'));
+      } else if (filter === 'offline') {
+        renderSidebar(vehicles.filter(v => v.status === 'offline'));
+      }
+    });
+  });
+
+  // Animate blinking on alert markers
+  setInterval(() => {
+    document.querySelectorAll('.marker-alert .marker-pulse').forEach(el => {
+      el.style.opacity = el.style.opacity === '0.5' ? '1' : '0.5';
+    });
+  }, 800);
+
+  // Enter on login
+  document.getElementById('inp-pass').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
+});
+</script>
+</body>
+</html>
