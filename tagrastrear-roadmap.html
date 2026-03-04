@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TagRastrear – Roadmap</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0d14;
+    --surface: #111520;
+    --card: #161b2e;
+    --border: #1e2540;
+    --accent: #00e5ff;
+    --accent2: #ff6b35;
+    --accent3: #7c3aed;
+    --green: #00d97e;
+    --yellow: #ffd60a;
+    --text: #e2e8f0;
+    --muted: #6b7a99;
+    --font: 'Syne', sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 48px 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  header {
+    margin-bottom: 60px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 40px;
+  }
+
+  .tag-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .tag-label::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    margin-bottom: 16px;
+  }
+
+  h1 span { color: var(--accent); }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 15px;
+    font-family: var(--mono);
+    line-height: 1.6;
+  }
+
+  .header-meta {
+    display: flex;
+    gap: 24px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+
+  .meta-pill {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 6px 14px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .meta-pill strong { color: var(--text); }
+
+  /* Summary cards */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 56px;
+  }
+
+  .summary-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .summary-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+  .summary-card.c1::after { background: var(--accent); }
+  .summary-card.c2::after { background: var(--accent2); }
+  .summary-card.c3::after { background: var(--green); }
+  .summary-card.c4::after { background: var(--yellow); }
+
+  .summary-card .num {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .c1 .num { color: var(--accent); }
+  .c2 .num { color: var(--accent2); }
+  .c3 .num { color: var(--green); }
+  .c4 .num { color: var(--yellow); }
+
+  .summary-card .label {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* Section title */
+  .section-title {
+    font-size: 11px;
+    font-family: var(--mono);
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Timeline */
+  .timeline {
+    position: relative;
+    margin-bottom: 64px;
+  }
+
+  .timeline-line {
+    position: absolute;
+    left: 28px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--accent), var(--accent3), var(--accent2));
+    opacity: 0.3;
+  }
+
+  .phase {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 12px;
+    animation: fadeIn 0.5s ease forwards;
+    opacity: 0;
+  }
+
+  @keyframes fadeIn {
+    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(16px); }
+  }
+
+  .phase:nth-child(1) { animation-delay: 0.1s; }
+  .phase:nth-child(2) { animation-delay: 0.2s; }
+  .phase:nth-child(3) { animation-delay: 0.3s; }
+  .phase:nth-child(4) { animation-delay: 0.4s; }
+  .phase:nth-child(5) { animation-delay: 0.5s; }
+  .phase:nth-child(6) { animation-delay: 0.6s; }
+
+  .phase-dot {
+    flex-shrink: 0;
+    width: 58px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+    font-weight: 700;
+    font-family: var(--mono);
+    position: relative;
+    z-index: 1;
+    margin-top: 20px;
+    transition: transform 0.2s;
+    cursor: default;
+  }
+
+  .dot:hover { transform: scale(1.3); }
+
+  .dur-badge {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--muted);
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+
+  .phase-card {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.2s, background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .phase-card:hover {
+    border-color: var(--accent);
+    transform: translateX(4px);
+    background: #1a2035;
+  }
+
+  .phase-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+  }
+
+  .phase-card.p1::before { background: var(--accent); }
+  .phase-card.p2::before { background: #a78bfa; }
+  .phase-card.p3::before { background: var(--green); }
+  .phase-card.p4::before { background: var(--accent2); }
+  .phase-card.p5::before { background: var(--yellow); }
+  .phase-card.p6::before { background: #f472b6; }
+
+  .phase-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .phase-name {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+
+  .phase-week {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.06);
+    color: var(--muted);
+  }
+
+  .phase-tasks {
+    display: none;
+    margin-top: 14px;
+    border-top: 1px solid var(--border);
+    padding-top: 14px;
+  }
+
+  .phase-card.open .phase-tasks { display: block; }
+
+  .task-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .task-item .check {
+    width: 16px;
+    height: 16px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+  }
+
+  .task-item .check:hover,
+  .task-item .check.done {
+    background: var(--green);
+    border-color: var(--green);
+    color: #000;
+  }
+
+  .milestone {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    margin-top: 12px;
+    padding: 8px 12px;
+    background: rgba(0,229,255,0.06);
+    border-radius: 4px;
+    border-left: 2px solid var(--accent);
+  }
+  .milestone::before { content: '✓ MARCO: '; opacity: 0.5; }
+
+  .toggle-hint {
+    font-size: 10px;
+    color: var(--muted);
+    font-family: var(--mono);
+    opacity: 0.6;
+  }
+
+  /* Payment section */
+  .payment-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 64px;
+  }
+
+  @media(max-width: 600px) {
+    .payment-grid { grid-template-columns: 1fr; }
+  }
+
+  .payment-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    animation: fadeIn 0.6s ease forwards;
+    opacity: 0;
+  }
+  .payment-card:nth-child(1) { animation-delay: 0.2s; }
+  .payment-card:nth-child(2) { animation-delay: 0.35s; }
+  .payment-card:nth-child(3) { animation-delay: 0.5s; }
+
+  .payment-card .pct {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .payment-card .amount {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--text);
+    margin: 8px 0 4px;
+  }
+
+  .payment-card .condition {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .payment-card .parcel {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--accent2);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  /* Risks */
+  .risks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+    margin-bottom: 64px;
+  }
+
+  .risk-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    gap: 12px;
+    animation: fadeIn 0.5s ease forwards;
+    opacity: 0;
+  }
+
+  .risk-card:nth-child(1) { animation-delay: 0.1s; }
+  .risk-card:nth-child(2) { animation-delay: 0.2s; }
+  .risk-card:nth-child(3) { animation-delay: 0.3s; }
+  .risk-card:nth-child(4) { animation-delay: 0.4s; }
+  .risk-card:nth-child(5) { animation-delay: 0.5s; }
+
+  .risk-badge {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+  .risk-badge.high { background: rgba(239,68,68,0.15); }
+  .risk-badge.med { background: rgba(255,214,10,0.12); }
+  .risk-badge.low { background: rgba(0,217,126,0.12); }
+
+  .risk-info h4 {
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .risk-info p {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .risk-tags {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+  }
+
+  .rtag {
+    font-family: var(--mono);
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    text-transform: uppercase;
+  }
+  .rtag.high { background: rgba(239,68,68,0.15); color: #f87171; }
+  .rtag.med { background: rgba(255,214,10,0.12); color: var(--yellow); }
+  .rtag.low { background: rgba(0,217,126,0.12); color: var(--green); }
+
+  /* Alternatives section */
+  .alt-section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px;
+    margin-bottom: 48px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .alt-section::before {
+    content: '💡';
+    position: absolute;
+    right: 24px;
+    top: 24px;
+    font-size: 32px;
+    opacity: 0.15;
+  }
+
+  .alt-section h3 {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    color: var(--accent2);
+  }
+
+  .alt-section .intro {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 24px;
+    line-height: 1.7;
+    font-family: var(--mono);
+  }
+
+  .alt-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+  }
+
+  .alt-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    transition: border-color 0.2s;
+  }
+  .alt-card:hover { border-color: var(--accent2); }
+
+  .alt-card .alt-badge {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 3px;
+  }
+  .alt-card.best .alt-badge { background: rgba(0,229,255,0.1); color: var(--accent); }
+  .alt-card.good .alt-badge { background: rgba(0,217,126,0.1); color: var(--green); }
+  .alt-card.sim .alt-badge { background: rgba(255,107,53,0.1); color: var(--accent2); }
+
+  .alt-card h4 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .alt-card p {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .alt-card .pros-cons {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+
+  .pro { color: var(--green); font-size: 11px; }
+  .con { color: #f87171; font-size: 11px; }
+
+  footer {
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="tag-label">Autovip Associação · Versão 1.0</div>
+    <h1>Tag<span>Rastrear</span><br>Roadmap do Projeto</h1>
+    <p class="subtitle">Sistema de Rastreamento BLE Crowd-Based · nRF52832 + PWA + FastAPI</p>
+    <div class="header-meta">
+      <div class="meta-pill">⏱ Prazo total: <strong>8 semanas</strong></div>
+      <div class="meta-pill">💰 Valor: <strong>R$ 20.000,00</strong></div>
+      <div class="meta-pill">👤 Equipe: <strong>1 Dev Full Stack</strong></div>
+      <div class="meta-pill">📦 Entrega: <strong>ZIP + Docker</strong></div>
+    </div>
+  </header>
+
+  <!-- Summary -->
+  <div class="summary-grid">
+    <div class="summary-card c1">
+      <div class="num">6</div>
+      <div class="label">Fases do Projeto</div>
+    </div>
+    <div class="summary-card c2">
+      <div class="num">8</div>
+      <div class="label">Semanas de Dev</div>
+    </div>
+    <div class="summary-card c3">
+      <div class="num">8</div>
+      <div class="label">Requisitos RQ</div>
+    </div>
+    <div class="summary-card c4">
+      <div class="num">5</div>
+      <div class="label">Riscos Mapeados</div>
+    </div>
+  </div>
+
+  <!-- Timeline -->
+  <div class="section-title">Roadmap Fase a Fase · clique para expandir</div>
+
+  <div class="timeline">
+    <div class="timeline-line"></div>
+
+    <!-- FASE 1 -->
+    <div class="phase">
+      <div class="phase-dot">
+        <div class="dot" style="border-color:var(--accent);color:var(--accent)">1</div>
+        <span class="dur-badge">1 sem</span>
+      </div>
+      <div class="phase-card p1" onclick="toggle(this)">
+        <div class="phase-header">
+          <span class="phase-name">📋 Planejamento & Setup</span>
+          <span class="phase-week">Semana 1</span>
+        </div>
+        <p style="font-size:12px;color:var(--muted)">Configuração do ambiente, backlog e kick-off com stakeholders. <span class="toggle-hint">↓ clique para ver tarefas</span></p>
+        <div class="phase-tasks">
+          <div class="task-item"><div class="check" onclick="done(event,this)">✓</div><span>Aprovar o TAP e a proposta comercial (Parcela 1 → R$12.000)</span></div>
+          <div class="task-item"><div class="check" onclick="done(event,this)">✓</div><span>Criar repositório Git com estrutura fw/, pwa/, backend/</span></div>
+          <div class="task-item"><div class="check" onclick="done(event,this)">✓</div><span>Instalar toolchain ARM GCC + arduino-nRF5 SDK</span></div>
+          <div class="task-item"><div class="check" onclick="done(event,this)">✓</div><span>Definir backlog técnico detalhado e cronograma interno</span></div>
+          <div class="task-item"><div class="check" onclick="done(event,this)">✓</div><span>Configurar ambiente Python (venv) + FastAPI + Docker local</span></div>
+          <div class="milestone">Ambiente configurado; backlog definido; contrato assinado</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FASE 2 -->
+    <div class="phase">
+      <div class="phase-dot">
+        <div class="dot" style="border-color:#a78bfa;color:#a78bfa">2</div>
+        <span class="dur-badge">2 sem</span>
+      </div>
+      <div class="phase-card p2" onclick="toggle(this)">
+        <div class="phase-header">
+          <span class="phase-name">📡 Firmware nRF52832</span>
+          <span class="phase-week">Semanas 2–3</span>
+        </div>
+        <p style="font-size:12px;color:var(--muted)">Código embarcado do beacon BLE. A parte mais especializada do projeto. <span class="toggle-hint">↓ clique para ver tarefas</span></p>
+        <div class="phase-tasks">
+          <div class="task-item"><div class="check" onclick="done(event,this)">✓</div><span>Configurar sdk_config.h: rádio, potência TX, modo sleep, watchdog</span></div>
+          <div class="task-item"><div class="check" onclick="done(event,this)">✓</div><span>Implementar main.c com advertising BLE VEICULO-[ID] a ≤ 200ms</span></div>
+          <div class="task-item"><div class="check" onclick="done(event,this)">✓</div><span>Suporte a UUID customizado ou Eddystone-UID</span></div>
+          <div class="task-item"><div class="check" onclick="done(event,this)">✓</div><span>Validar beacon com app nRF Connect (RSSI ≥ -70dBm a 3m)</span></div>
+          <div class="task-item"><div class="check" onclick="done(event,this)">✓</div><span>Medir consumo de bateria e alcance efetivo</span></div>
+          <div class="task-item"><div class="check" onclick="done(event,this)">✓</div><span>Comentar código + instruções de compilação e gravação (flash)</span></div>
+          <div class="milestone">main.c compilando; beacon detectado via nRF Connect</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FASE 3 -->
+    <div class="phase">
+      <div class="phase-dot">
+        <div class="dot" style="border-color:var(--green);color:var(--green)">3</div>
+        <span class="dur-badge">1.5 sem</span>
+      </div>
+      <div class="phase-card p3" onclick="toggle(this)">
+        <div class="phase-header">
+          <span class="phase-name">⚙️ Backend FastAPI</span>
+          <span class="phase-week">Semanas 4–5</span>
+        </div>
+        <p style="font-size:12px;color:var(--muted)">API REST + banco de dados SQLite. Coração do sistema. <span class="toggle-hint">↓ clique para ver tarefas</span></p>
+        <div class="phase-tasks">
+          <div class="task-item"><div class="check" onclick="done(event,this)">✓</div><span>Criar estrutura backend/ com requirements.txt (FastAPI, uvicorn, pydantic)</span></div>
+          <div class="task-item"><div class="check" onclick="done(event,this)">✓</div><span>Criar tabela SQLite: hits (id, tag, lat, lng, ts, received_at)</span></div>
+          <div class="task-item"><div class="check" onclick="done(event,this)">✓</div><span>Implementar POST /hit com validação Pydantic → resposta 201</span></div>
+          <div class="task-item"><div class="check" onclick="done(event,this)">✓</div><span>Implementar GET /pos/{tag} → 50 últimos registros DESC em JSON</span></div>
+          <div class="task-item"><div class="check" onclick="done(event,this)">✓</div><span>Testes unitários com pytest + httpx; carga básica com locust</span></div>
+          <div class="milestone">Endpoints /hit e /pos/{tag} funcionais; banco SQLite operando</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FASE 4 -->
+    <div class="phase">
+      <div class="phase-dot">
+        <div class="dot" style="border-color:var(--accent2);color:var(--accent2)">4</div>
+        <span class="dur-badge">2 sem</span>
+      </div>
+      <div class="phase-card p4" onclick="toggle(this)">
+        <div class="phase-header">
+          <span class="phase-name">📱 Progressive Web App (PWA)</span>
+          <span class="phase-week">Semanas 5–6</span>
+        </div>
+        <p style="font-size:12px;color:var(--muted)">O app que os "escutadores" instalam. Captura BLE + GPS e envia ao backend. <span class="toggle-hint">↓ clique para ver tarefas</span></p>
+        <div class="phase-tasks">
+          <div class="task-item"><div class="check" onclick="done(event,this)">✓</div><span>Criar manifest.json, ícones e estrutura pwa/</span></div>
+          <div class="task-item"><div class="check" onclick="done(event,this)">✓</div><span>Layout responsivo (index.html): botão Start/Stop + badge de hits + QR Code</span></div>
+          <div class="task-item"><div class="check" onclick="done(event,this)">✓</div><span>app.js: Web Bluetooth requestLEScan → detecção VEICULO-* → GPS → POST /hit (< 3s)</span></div>
+          <div class="task-item"><div class="check" onclick="done(event,this)">✓</div><span>sw.js: Service Worker com cache offline + Background Sync (fila de requisições)</span></div>
+          <div class="task-item"><div class="check" onclick="done(event,this)">✓</div><span>Badge tempo real: fetch a cada 5s com contagem de hits na última hora</span></div>
+          <div class="task-item"><div class="check" onclick="done(event,this)">✓</div><span>Mensagem de erro amigável quando Web Bluetooth indisponível</span></div>
+          <div class="task-item"><div class="check" onclick="done(event,this)">✓</div><span>Testes em Android ≥6/Chrome e iOS ≥15/Safari + Lighthouse PWA score</span></div>
+          <div class="milestone">Escaneio BLE operacional; hits sendo enviados; offline funcionando</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FASE 5 -->
+    <div class="phase">
+      <div class="phase-dot">
+        <div class="dot" style="border-color:var(--yellow);color:var(--yellow)">5</div>
+        <span class="dur-badge">0.5 sem</span>
+      </div>
+      <div class="phase-card p5" onclick="toggle(this)">
+        <div class="phase-header">
+          <span class="phase-name">🗺️ Front Gerencial + Docker</span>
+          <span class="phase-week">Semana 7</span>
+        </div>
+        <p style="font-size:12px;color:var(--muted)">Painel de mapa com Leaflet e containerização da aplicação. <span class="toggle-hint">↓ clique para ver tarefas</span></p>
+        <div class="phase-tasks">
+          <div class="task-item"><div class="check" onclick="done(event,this)">✓</div><span>list.html: mapa Leaflet + listagem de tags recentes + timeline de hits por veículo</span></div>
+          <div class="task-item"><div class="check" onclick="done(event,this)">✓</div><span>Dockerfile single-stage python:3.11-slim + cópia dos assets PWA</span></div>
+          <div class="task-item"><div class="check" onclick="done(event,this)">✓</div><span>docker-compose.yml com volume para persistência do SQLite</span></div>
+          <div class="task-item"><div class="check" onclick="done(event,this)">✓</div><span>README.md: build, execução local, FAQ e pré-requisitos</span></div>
+          <div class="milestone">list.html com Leaflet; docker run -p 8000:8000 tagrastrear sem erros</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FASE 6 -->
+    <div class="phase">
+      <div class="phase-dot">
+        <div class="dot" style="border-color:#f472b6;color:#f472b6">6</div>
+        <span class="dur-badge">1 sem</span>
+      </div>
+      <div class="phase-card p6" onclick="toggle(this)">
+        <div class="phase-header">
+          <span class="phase-name">✅ Testes & Homologação</span>
+          <span class="phase-week">Semana 8</span>
+        </div>
+        <p style="font-size:12px;color:var(--muted)">Validação end-to-end, checklist de entrega e empacotamento final. <span class="toggle-hint">↓ clique para ver tarefas</span></p>
+        <div class="phase-tasks">
+          <div class="task-item"><div class="check" onclick="done(event,this)">✓</div><span>Teste end-to-end: Beacon → PWA → backend → mapa (localização em ≤ 10s)</span></div>
+          <div class="task-item"><div class="check" onclick="done(event,this)">✓</div><span>Verificar todos artefatos: fw/beacon/, pwa/, backend/ completos</span></div>
+          <div class="task-item"><div class="check" onclick="done(event,this)">✓</div><span>Revisar header MIT em todos os arquivos de código-fonte</span></div>
+          <div class="task-item"><div class="check" onclick="done(event,this)">✓</div><span>Gerar ZIP final e entregar à Autovip Associação</span></div>
+          <div class="task-item"><div class="check" onclick="done(event,this)">✓</div><span>Garantia de 30 dias pós-homologação ativada; Parcela 3 → R$9.000</span></div>
+          <div class="milestone">Checklist 100%; ZIP aprovado; projeto entregue</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Pagamento -->
+  <div class="section-title">Condições de Pagamento</div>
+  <div class="payment-grid">
+    <div class="payment-card">
+      <div class="parcel">Parcela 1</div>
+      <div class="pct">25%</div>
+      <div class="amount">R$ 5.000,00</div>
+      <div class="condition">Na aprovação do TAP</div>
+    </div>
+    <div class="payment-card">
+      <div class="parcel">Parcela 2</div>
+      <div class="pct" style="color:var(--accent2)">25%</div>
+      <div class="amount">R$ 5.000,00</div>
+      <div class="condition">Feedback da Alpha e Beta Firmware + Backend</div>
+    </div>
+    <div class="payment-card">
+      <div class="parcel">Parcela 3 e 4</div>
+      <div class="pct" style="color:var(--green)">50%</div>
+      <div class="amount">R$ 5.000,00 + R$ 5.000,00</div>
+      <div class="condition">Homologação final</div>
+    </div>
+  </div>
+
+  <!-- Risks -->
+  <div class="section-title">Riscos Mapeados</div>
+  <div class="risks-grid">
+    <div class="risk-card">
+      <div class="risk-badge high">🍎</div>
+      <div class="risk-info">
+        <h4>iOS Safari bloquear Web Bluetooth</h4>
+        <p>Apple pode remover suporte em versões futuras do Safari.</p>
+        <div class="risk-tags"><span class="rtag high">Alto</span><span class="rtag med">Prob. Média</span></div>
+      </div>
+    </div>
+    <div class="risk-card">
+      <div class="risk-badge high">👥</div>
+      <div class="risk-info">
+        <h4>Baixa adoção do PWA</h4>
+        <p>Poucos "escutadores" = cobertura geográfica insuficiente.</p>
+        <div class="risk-tags"><span class="rtag high">Alto</span><span class="rtag high">Prob. Alta</span></div>
+      </div>
+    </div>
+    <div class="risk-card">
+      <div class="risk-badge med">📍</div>
+      <div class="risk-info">
+        <h4>Precisão GPS insuficiente</h4>
+        <p>GPS do "escutador" pode ter erro de dezenas de metros.</p>
+        <div class="risk-tags"><span class="rtag med">Médio</span><span class="rtag low">Prob. Baixa</span></div>
+      </div>
+    </div>
+    <div class="risk-card">
+      <div class="risk-badge med">🗄️</div>
+      <div class="risk-info">
+        <h4>SQLite vs volume de hits</h4>
+        <p>Em escala, o SQLite pode se tornar um gargalo.</p>
+        <div class="risk-tags"><span class="rtag med">Médio</span><span class="rtag low">Prob. Baixa</span></div>
+      </div>
+    </div>
+    <div class="risk-card">
+      <div class="risk-badge low">🔧</div>
+      <div class="risk-info">
+        <h4>Hardware indisponível para testes</h4>
+        <p>Sem beacons físicos, o firmware só pode ser validado em simulador.</p>
+        <div class="risk-tags"><span class="rtag med">Médio</span><span class="rtag med">Prob. Média</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alternativas -->
+  <div class="section-title">Alternativas Tecnológicas Sugeridas</div>
+  <div class="alt-section">
+    <h3>Opções mais simples para considerar</h3>
+    <p class="intro">O TagRastrear com nRF52832 é robusto, porém exige firmware embarcado especializado.
+    Dependendo da prioridade da Autovip, estas alternativas podem reduzir complexidade e custo inicial:</p>
+    <div class="alt-grid">
+
+      <div class="alt-card best">
+        <span class="alt-badge">⭐ Recomendado</span>
+        <h4>AirTag / Samsung SmartTag + Rede Apple/Google</h4>
+        <p>Usa a rede crowd-based já existente de centenas de milhões de dispositivos. Sem necessidade de PWA, firmware ou backend próprio. Custo ~R$200/tag.</p>
+        <div class="pros-cons">
+          <span class="pro">✓ Sem dev de firmware</span>
+          <span class="pro">✓ Rede enorme já existente</span>
+          <span class="con">✗ Dependência Apple/Google</span>
+          <span class="con">✗ Mais caro por unidade</span>
+        </div>
+      </div>
+
+      <div class="alt-card good">
+        <span class="alt-badge">✅ Mais Simples</span>
+        <h4>ESP32 + MQTT + Node-RED</h4>
+        <p>Substitui o nRF52832 pelo ESP32 (Wi-Fi + BLE nativo). Muito mais fácil de programar com Arduino IDE, bibliotecas prontas e sem necessidade de SDK especializado.</p>
+        <div class="pros-cons">
+          <span class="pro">✓ Arduino IDE simples</span>
+          <span class="pro">✓ Wi-Fi embutido</span>
+          <span class="pro">✓ ~R$20/unidade</span>
+          <span class="con">✗ Maior consumo de bateria</span>
+        </div>
+      </div>
+
+      <div class="alt-card sim">
+        <span class="alt-badge">⚡ Mais Rápido de implementar</span>
+        <h4>Traccar + OBD Tracker GPS GSM</h4>
+        <p>Plataforma open-source Traccar já pronta (sem dev de backend). Tracker OBD-II lê localização direto via GSM. Ideal se a moto tiver tomada de energia.</p>
+        <div class="pros-cons">
+          <span class="pro">✓ Zero desenvolvimento backend</span>
+          <span class="pro">✓ Mapa já incluso</span>
+          <span class="con">✗ Custo de chip SIM mensal</span>
+          <span class="con">✗ Depende de cobertura GSM</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>TagRastrear · Autovip Associação · Roadmap v1.0 · Março 2025</footer>
+
+</div>
+
+<script>
+  function toggle(card) {
+    card.classList.toggle('open');
+  }
+
+  function done(event, el) {
+    event.stopPropagation();
+    el.classList.toggle('done');
+  }
+</script>
+</body>
+</html>
